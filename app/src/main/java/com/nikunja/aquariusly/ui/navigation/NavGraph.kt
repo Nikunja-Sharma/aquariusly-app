@@ -16,6 +16,11 @@ import com.nikunja.aquariusly.ui.screens.onboarding.OnboardingScreen
 import com.nikunja.aquariusly.ui.screens.profile.ProfileScreen
 import com.nikunja.aquariusly.ui.screens.profileedit.ProfileEditScreen
 import com.nikunja.aquariusly.ui.screens.settings.SettingsScreen
+import com.nikunja.aquariusly.ui.screens.settings.subscription.*
+import com.nikunja.aquariusly.ui.screens.settings.ai.*
+import com.nikunja.aquariusly.ui.screens.settings.chat.*
+import com.nikunja.aquariusly.ui.screens.settings.privacy.*
+import com.nikunja.aquariusly.ui.screens.settings.support.*
 
 @Composable
 fun NavGraph(
@@ -115,29 +120,122 @@ fun NavGraph(
         
         composable(route = Screen.Settings.route) {
             SettingsScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onEditProfileClick = {
-                    navController.navigate(Screen.ProfileEdit.route)
-                },
+                onBackClick = { navController.popBackStack() },
+                onEditProfileClick = { navController.navigate(Screen.ProfileEdit.route) },
                 onSignOut = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                onCurrentPlanClick = { navController.navigate(Screen.CurrentPlan.route) },
+                onCreditsClick = { navController.navigate(Screen.Credits.route) },
+                onBuyCreditsClick = { navController.navigate(Screen.BuyCredits.route) },
+                onBillingHistoryClick = { navController.navigate(Screen.BillingHistory.route) },
+                onManageSubscriptionClick = { navController.navigate(Screen.ManageSubscription.route) },
+                onModelSelectionClick = { navController.navigate(Screen.ModelSelection.route) },
+                onMcpServersClick = { navController.navigate(Screen.McpServers.route) },
+                onRagSettingsClick = { navController.navigate(Screen.RagSettings.route) },
+                onSystemPromptClick = { navController.navigate(Screen.SystemPrompt.route) },
+                onTemperatureClick = { navController.navigate(Screen.Temperature.route) },
+                onMaxTokensClick = { navController.navigate(Screen.MaxTokens.route) },
+                onChatHistoryClick = { navController.navigate(Screen.ChatHistory.route) },
+                onClearChatsClick = { navController.navigate(Screen.ClearChats.route) },
+                onPrivacyClick = { navController.navigate(Screen.Privacy.route) },
+                onSecurityClick = { navController.navigate(Screen.Security.route) },
+                onHelpCenterClick = { navController.navigate(Screen.HelpCenter.route) },
+                onSendFeedbackClick = { navController.navigate(Screen.SendFeedback.route) },
+                onAboutClick = { navController.navigate(Screen.About.route) }
             )
         }
         
         composable(route = Screen.ProfileEdit.route) {
             ProfileEditScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onProfileUpdated = {
-                    // Profile will reload when navigating back
-                }
+                onBackClick = { navController.popBackStack() },
+                onProfileUpdated = { }
             )
+        }
+        
+        // Subscription & Billing Screens
+        composable(route = Screen.CurrentPlan.route) {
+            CurrentPlanScreen(
+                onBackClick = { navController.popBackStack() },
+                onUpgradeClick = { navController.navigate(Screen.ManageSubscription.route) }
+            )
+        }
+        
+        composable(route = Screen.Credits.route) {
+            CreditsScreen(
+                onBackClick = { navController.popBackStack() },
+                onBuyCreditsClick = { navController.navigate(Screen.BuyCredits.route) }
+            )
+        }
+        
+        composable(route = Screen.BuyCredits.route) {
+            BuyCreditsScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.BillingHistory.route) {
+            BillingHistoryScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.ManageSubscription.route) {
+            ManageSubscriptionScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        // AI Configuration Screens
+        composable(route = Screen.ModelSelection.route) {
+            ModelSelectionScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.McpServers.route) {
+            McpServersScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.RagSettings.route) {
+            RagSettingsScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.SystemPrompt.route) {
+            SystemPromptScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.Temperature.route) {
+            TemperatureScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.MaxTokens.route) {
+            MaxTokensScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        // Chat Settings Screens
+        composable(route = Screen.ChatHistory.route) {
+            ChatHistoryScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.ClearChats.route) {
+            ClearChatsScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        // Privacy & Security Screens
+        composable(route = Screen.Privacy.route) {
+            PrivacyScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.Security.route) {
+            SecurityScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        // Support Screens
+        composable(route = Screen.HelpCenter.route) {
+            HelpCenterScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.SendFeedback.route) {
+            SendFeedbackScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        composable(route = Screen.About.route) {
+            AboutScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }

@@ -44,6 +44,24 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onEditProfileClick: () -> Unit,
     onSignOut: () -> Unit,
+    onCurrentPlanClick: () -> Unit = {},
+    onCreditsClick: () -> Unit = {},
+    onBuyCreditsClick: () -> Unit = {},
+    onBillingHistoryClick: () -> Unit = {},
+    onManageSubscriptionClick: () -> Unit = {},
+    onModelSelectionClick: () -> Unit = {},
+    onMcpServersClick: () -> Unit = {},
+    onRagSettingsClick: () -> Unit = {},
+    onSystemPromptClick: () -> Unit = {},
+    onTemperatureClick: () -> Unit = {},
+    onMaxTokensClick: () -> Unit = {},
+    onChatHistoryClick: () -> Unit = {},
+    onClearChatsClick: () -> Unit = {},
+    onPrivacyClick: () -> Unit = {},
+    onSecurityClick: () -> Unit = {},
+    onHelpCenterClick: () -> Unit = {},
+    onSendFeedbackClick: () -> Unit = {},
+    onAboutClick: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -146,35 +164,35 @@ fun SettingsScreen(
                     icon = Icons.Default.Star,
                     title = "Current Plan",
                     subtitle = "Pro Plan • Active",
-                    onClick = { },
+                    onClick = onCurrentPlanClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Add,
                     title = "Credits",
                     subtitle = "1,250 credits remaining",
-                    onClick = { },
+                    onClick = onCreditsClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.ShoppingCart,
                     title = "Buy Credits",
                     subtitle = "Purchase additional credits",
-                    onClick = { },
+                    onClick = onBuyCreditsClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.DateRange,
                     title = "Billing History",
                     subtitle = "View past invoices",
-                    onClick = { },
+                    onClick = onBillingHistoryClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Refresh,
                     title = "Manage Subscription",
                     subtitle = "Upgrade, downgrade or cancel",
-                    onClick = { },
+                    onClick = onManageSubscriptionClick,
                     colors = colors
                 )
             }
@@ -220,42 +238,42 @@ fun SettingsScreen(
                     icon = Icons.Default.Star,
                     title = "Model Selection",
                     subtitle = "Choose your AI model",
-                    onClick = { },
+                    onClick = onModelSelectionClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Build,
                     title = "MCP Servers",
                     subtitle = "Configure Model Context Protocol",
-                    onClick = { },
+                    onClick = onMcpServersClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Search,
                     title = "RAG Settings",
                     subtitle = "Retrieval Augmented Generation",
-                    onClick = { },
+                    onClick = onRagSettingsClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Create,
                     title = "System Prompt",
                     subtitle = "Customize AI behavior",
-                    onClick = { },
+                    onClick = onSystemPromptClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Settings,
                     title = "Temperature",
                     subtitle = "Control response creativity",
-                    onClick = { },
+                    onClick = onTemperatureClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.List,
                     title = "Max Tokens",
                     subtitle = "Set response length limit",
-                    onClick = { },
+                    onClick = onMaxTokensClick,
                     colors = colors
                 )
             }
@@ -266,7 +284,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Refresh,
                     title = "Chat History",
                     subtitle = "Manage your conversations",
-                    onClick = { },
+                    onClick = onChatHistoryClick,
                     colors = colors
                 )
                 SettingsToggleItem(
@@ -281,7 +299,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Delete,
                     title = "Clear All Chats",
                     subtitle = "Delete all conversation history",
-                    onClick = { },
+                    onClick = onClearChatsClick,
                     colors = colors
                 )
             }
@@ -292,14 +310,14 @@ fun SettingsScreen(
                     icon = Icons.Default.Lock,
                     title = "Privacy",
                     subtitle = "Manage your data",
-                    onClick = { },
+                    onClick = onPrivacyClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Check,
                     title = "Security",
                     subtitle = "App lock and authentication",
-                    onClick = { },
+                    onClick = onSecurityClick,
                     colors = colors
                 )
             }
@@ -310,21 +328,21 @@ fun SettingsScreen(
                     icon = Icons.Default.Info,
                     title = "Help Center",
                     subtitle = "FAQs and guides",
-                    onClick = { },
+                    onClick = onHelpCenterClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Email,
                     title = "Send Feedback",
                     subtitle = "Report bugs or suggest features",
-                    onClick = { },
+                    onClick = onSendFeedbackClick,
                     colors = colors
                 )
                 SettingsNavigationItem(
                     icon = Icons.Default.Info,
                     title = "About",
                     subtitle = "Version 1.0.0",
-                    onClick = { },
+                    onClick = onAboutClick,
                     colors = colors
                 )
             }
