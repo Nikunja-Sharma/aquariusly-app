@@ -23,16 +23,16 @@ class ProfileViewModel @Inject constructor(
     val state: StateFlow<ProfileState> = _state.asStateFlow()
 
     init {
-        loadUser()
+        loadUser(forceRefresh = false)
     }
 
-    fun loadUser() {
+    fun loadUser(forceRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, error = null) }
             
-            when (val result = getCurrentUserUseCase()) {
+            when (val result = getCurrentUserUseCase(forceRefresh)) {
                 is Resource.Success -> {
-                    _state.update { it.copy(isLoading = false, user = result.data) }
+                    _state.update { it.copy(isLoading = false, user = result.data, error = null) }
                 }
                 is Resource.Error -> {
                     _state.update { it.copy(isLoading = false, error = result.message) }
@@ -43,7 +43,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun refresh() {
-        loadUser()
+        loadUser(forceRefresh = true)
     }
 
     fun signOut() {

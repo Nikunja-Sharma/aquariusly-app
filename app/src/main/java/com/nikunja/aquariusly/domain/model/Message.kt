@@ -7,8 +7,12 @@ data class Message(
     val timestamp: Long = System.currentTimeMillis(),
     val modelId: String? = null,
     val isLoading: Boolean = false,
-    val attachments: List<MessageAttachment> = emptyList()
-)
+    val isStreaming: Boolean = false,
+    val attachments: List<MessageAttachment> = emptyList(),
+    val reasoning: String? = null
+) {
+    val hasReasoning: Boolean get() = !reasoning.isNullOrEmpty()
+}
 
 data class Conversation(
     val id: String,

@@ -50,6 +50,7 @@ fun SettingsScreen(
     onBillingHistoryClick: () -> Unit = {},
     onManageSubscriptionClick: () -> Unit = {},
     onModelSelectionClick: () -> Unit = {},
+    onConfigureModelClick: () -> Unit = {},
     onMcpServersClick: () -> Unit = {},
     onRagSettingsClick: () -> Unit = {},
     onSystemPromptClick: () -> Unit = {},
@@ -239,6 +240,13 @@ fun SettingsScreen(
                     title = "Model Selection",
                     subtitle = "Choose your AI model",
                     onClick = onModelSelectionClick,
+                    colors = colors
+                )
+                SettingsNavigationItem(
+                    icon = Icons.Default.Settings,
+                    title = "Configure Models",
+                    subtitle = "Browse and select from 350+ models",
+                    onClick = onConfigureModelClick,
                     colors = colors
                 )
                 SettingsNavigationItem(

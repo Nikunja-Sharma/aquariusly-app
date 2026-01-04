@@ -37,9 +37,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentUser(): Resource<User> {
-        // Return cached user if available
-        cachedUser?.let { return Resource.Success(it) }
+    override suspend fun getCurrentUser(forceRefresh: Boolean): Resource<User> {
+        // Return cached user if available and not forcing refresh
+        if (!forceRefresh) {
+            cachedUser?.let { return Resource.Success(it) }
+        }
 
         return try {
             val response = authApiService.getCurrentUser()
@@ -51,12 +53,18 @@ class AuthRepositoryImpl @Inject constructor(
                     cachedUser = user
                     Resource.Success(user)
                 } else {
+                    // Return cached user as fallback if API returns empty
+                    cachedUser?.let { return Resource.Success(it) }
                     Resource.Error("Empty response")
                 }
             } else {
+                // Return cached user as fallback on API error
+                cachedUser?.let { return Resource.Success(it) }
                 Resource.Error(response.message() ?: "Failed to get user")
             }
         } catch (e: Exception) {
+            // Return cached user as fallback on network error
+            cachedUser?.let { return Resource.Success(it) }
             Resource.Error(e.message ?: "Network error")
         }
     }

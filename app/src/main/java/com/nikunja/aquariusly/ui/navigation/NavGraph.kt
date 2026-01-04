@@ -7,8 +7,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.nikunja.aquariusly.ui.screens.chat.ChatScreen
 import com.nikunja.aquariusly.ui.screens.home.HomeScreen
 import com.nikunja.aquariusly.ui.screens.login.LoginScreen
@@ -18,9 +20,12 @@ import com.nikunja.aquariusly.ui.screens.profileedit.ProfileEditScreen
 import com.nikunja.aquariusly.ui.screens.settings.SettingsScreen
 import com.nikunja.aquariusly.ui.screens.settings.subscription.*
 import com.nikunja.aquariusly.ui.screens.settings.ai.*
+import com.nikunja.aquariusly.ui.screens.settings.ai.configuremodel.ConfigureModelScreen
 import com.nikunja.aquariusly.ui.screens.settings.chat.*
 import com.nikunja.aquariusly.ui.screens.settings.privacy.*
 import com.nikunja.aquariusly.ui.screens.settings.support.*
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun NavGraph(
@@ -97,6 +102,27 @@ fun NavGraph(
             )
         }
         
+        composable(
+            route = Screen.ChatWithModel.ROUTE,
+            arguments = listOf(
+                navArgument(Screen.ChatWithModel.ARG_MODEL_ID) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val modelId = backStackEntry.arguments?.getString(Screen.ChatWithModel.ARG_MODEL_ID) ?: ""
+            ChatScreen(
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                initialModelId = modelId
+            )
+        }
+        
         composable(route = Screen.Home.route) {
             HomeScreen(
                 onProfileClick = {
@@ -133,6 +159,7 @@ fun NavGraph(
                 onBillingHistoryClick = { navController.navigate(Screen.BillingHistory.route) },
                 onManageSubscriptionClick = { navController.navigate(Screen.ManageSubscription.route) },
                 onModelSelectionClick = { navController.navigate(Screen.ModelSelection.route) },
+                onConfigureModelClick = { navController.navigate(Screen.ConfigureModel.route) },
                 onMcpServersClick = { navController.navigate(Screen.McpServers.route) },
                 onRagSettingsClick = { navController.navigate(Screen.RagSettings.route) },
                 onSystemPromptClick = { navController.navigate(Screen.SystemPrompt.route) },
@@ -184,7 +211,27 @@ fun NavGraph(
         
         // AI Configuration Screens
         composable(route = Screen.ModelSelection.route) {
-            ModelSelectionScreen(onBackClick = { navController.popBackStack() })
+            com.nikunja.aquariusly.ui.screens.settings.ai.ModelSelectionScreen(
+                onBackClick = { navController.popBackStack() },
+                onChatWithModel = { modelId ->
+                    val encodedModelId = URLEncoder.encode(modelId, StandardCharsets.UTF_8.toString())
+                    navController.navigate("chat?modelId=$encodedModelId") {
+                        popUpTo(Screen.Chat.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable(route = Screen.ConfigureModel.route) {
+            ConfigureModelScreen(
+                onBackClick = { navController.popBackStack() },
+                onChatWithModel = { modelId ->
+                    val encodedModelId = URLEncoder.encode(modelId, StandardCharsets.UTF_8.toString())
+                    navController.navigate("chat?modelId=$encodedModelId") {
+                        popUpTo(Screen.Chat.route) { inclusive = true }
+                    }
+                }
+            )
         }
         
         composable(route = Screen.McpServers.route) {

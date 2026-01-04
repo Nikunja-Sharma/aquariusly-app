@@ -22,6 +22,7 @@ fun ChatScreen(
     onProfileClick: () -> Unit,
     onSettingsClick: () -> Unit = {},
     initialChatId: String? = null,
+    initialModelId: String? = null,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -34,6 +35,13 @@ fun ChatScreen(
     LaunchedEffect(initialChatId) {
         initialChatId?.let { chatId ->
             viewModel.onEvent(ChatEvent.SelectHistory(chatId))
+        }
+    }
+    
+    // Handle model selection from navigation
+    LaunchedEffect(initialModelId) {
+        if (!initialModelId.isNullOrBlank()) {
+            viewModel.onEvent(ChatEvent.SetInitialModel(initialModelId))
         }
     }
     
@@ -106,7 +114,13 @@ fun ChatScreen(
                 }
                 
                 if (state.isLoading) {
-                    item { TypingIndicator(model = state.selectedModel) }
+                    item { 
+                        TypingIndicator(
+                            model = state.selectedModel,
+                            isThinking = state.isThinking,
+                            thinkingContent = state.streamingReasoning
+                        )
+                    }
                 }
             }
             

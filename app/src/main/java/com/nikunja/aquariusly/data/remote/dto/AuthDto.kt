@@ -49,7 +49,11 @@ data class UserPreferencesDto(
     @SerializedName("notifications")
     val notifications: Boolean,
     @SerializedName("language")
-    val language: String
+    val language: String,
+    @SerializedName("preferredModels")
+    val preferredModels: List<String> = emptyList(),
+    @SerializedName("defaultModel")
+    val defaultModel: String? = null
 )
 
 data class UpdateProfileRequest(
@@ -65,7 +69,11 @@ data class UpdatePreferencesRequest(
     @SerializedName("notifications")
     val notifications: Boolean? = null,
     @SerializedName("language")
-    val language: String? = null
+    val language: String? = null,
+    @SerializedName("preferredModels")
+    val preferredModels: List<String>? = null,
+    @SerializedName("defaultModel")
+    val defaultModel: String? = null
 )
 
 data class PreferencesResponse(

@@ -3,9 +3,12 @@ package com.nikunja.aquariusly.ui.screens.settings.ai
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -13,76 +16,36 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.nikunja.aquariusly.ui.theme.UnifiedAIColors
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nikunja.aquariusly.domain.model.ConfigurableModel
 import com.nikunja.aquariusly.ui.theme.UnifiedTheme
-
-data class AIModel(
-    val id: String,
-    val name: String,
-    val provider: String,
-    val description: String,
-    val contextWindow: String,
-    val speed: String,
-    val costPerToken: String,
-    val capabilities: List<String>,
-    val isSelected: Boolean = false,
-    val isPro: Boolean = false
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModelSelectionScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onChatWithModel: (String) -> Unit = {},
+    viewModel: ModelSelectionViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val colors = UnifiedTheme.colors
-    var selectedModelId by remember { mutableStateOf("gpt-4-turbo") }
-    
-    val models = listOf(
-        AIModel(
-            id = "gpt-4-turbo",
-            name = "GPT-4 Turbo",
-            provider = "OpenAI",
-            description = "Most capable model for complex tasks",
-            contextWindow = "128K tokens",
-            speed = "Fast",
-            costPerToken = "2 credits/1K tokens",
-            capabilities = listOf("Reasoning", "Coding", "Analysis", "Creative"),
-            isSelected = true
-        ),
-        AIModel(
-            id = "claude-3-opus",
-            name = "Claude 3 Opus",
-            provider = "Anthropic",
-            description = "Excellent for nuanced conversations",
-            contextWindow = "200K tokens",
-            speed = "Medium",
-            costPerToken = "3 credits/1K tokens",
-            capabilities = listOf("Writing", "Analysis", "Research"),
-            isPro = true
-        ),
-        AIModel(
-            id = "gemini-pro",
-            name = "Gemini Pro",
-            provider = "Google",
-            description = "Balanced performance and speed",
-            contextWindow = "32K tokens",
-            speed = "Very Fast",
-            costPerToken = "1 credit/1K tokens",
-            capabilities = listOf("General", "Coding", "Math")
-        ),
-        AIModel(
-            id = "llama-3-70b",
-            name = "Llama 3 70B",
-            provider = "Meta",
-            description = "Open source powerhouse",
-            contextWindow = "8K tokens",
-            speed = "Fast",
-            costPerToken = "0.5 credits/1K tokens",
-            capabilities = listOf("General", "Coding")
-        )
-    )
+    val listState = rememberLazyListState()
+
+    // Load more when reaching end
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { lastIndex ->
+                if (lastIndex != null && lastIndex >= state.models.size - 3) {
+                    viewModel.onLoadMore()
+                }
+            }
+    }
 
     Scaffold(
         containerColor = colors.backgroundPrimary,
@@ -104,9 +67,7 @@ fun ModelSelectionScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colors.backgroundPrimary
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.backgroundPrimary)
             )
         }
     ) { paddingValues ->
@@ -114,23 +75,147 @@ fun ModelSelectionScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "Choose your default AI model",
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary
+            // Search Bar
+            SearchBar(
+                query = state.searchQuery,
+                onQueryChange = viewModel::onSearchQueryChange,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            
-            models.forEach { model ->
-                ModelCard(
-                    model = model,
-                    isSelected = model.id == selectedModelId,
-                    onClick = { selectedModelId = model.id },
-                    colors = colors
+
+            // Provider Filter Chips
+            if (state.providers.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        FilterChip(
+                            selected = state.selectedProvider == null,
+                            onClick = { viewModel.onProviderSelected(null) },
+                            label = { Text("All") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = colors.accentBlue,
+                                selectedLabelColor = colors.textPrimary
+                            )
+                        )
+                    }
+                    items(state.providers) { provider ->
+                        FilterChip(
+                            selected = state.selectedProvider == provider,
+                            onClick = { viewModel.onProviderSelected(provider) },
+                            label = { Text(provider) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = colors.accentBlue,
+                                selectedLabelColor = colors.textPrimary
+                            )
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            // Stats
+            state.pagination?.let { pagination ->
+                Text(
+                    text = "${pagination.total} models available",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textMuted,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
+            }
+
+            // Models List
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items = state.models, key = { it.id }) { model ->
+                    ModelCard(
+                        model = model,
+                        isSelected = state.selectedModelId == model.id,
+                        onClick = { viewModel.onModelSelect(model) },
+                        onChatClick = { onChatWithModel(model.id) }
+                    )
+                }
+
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = colors.accentBlue)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = UnifiedTheme.colors
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = colors.inputBackground,
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.inputBorder)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                modifier = Modifier.size(20.dp),
+                tint = colors.textMuted
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            BasicTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                modifier = Modifier.weight(1f),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = colors.textPrimary),
+                cursorBrush = SolidColor(colors.accentBlue),
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (query.isEmpty()) {
+                            Text(
+                                text = "Search models...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.textMuted
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
+            )
+            if (query.isNotEmpty()) {
+                IconButton(
+                    onClick = { onQueryChange("") },
+                    modifier = Modifier.size(20.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Clear,
+                        contentDescription = "Clear",
+                        tint = colors.textMuted
+                    )
+                }
             }
         }
     }
@@ -138,134 +223,106 @@ fun ModelSelectionScreen(
 
 @Composable
 private fun ModelCard(
-    model: AIModel,
+    model: ConfigurableModel,
     isSelected: Boolean,
     onClick: () -> Unit,
-    colors: UnifiedAIColors
+    onChatClick: () -> Unit
 ) {
+    val colors = UnifiedTheme.colors
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = if (isSelected) colors.accentBlue else colors.borderDefault,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(12.dp)
             )
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
         color = if (isSelected) colors.accentBlue.copy(alpha = 0.08f) else colors.surfaceElevated
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = onClick,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = colors.accentBlue,
-                            unselectedColor = colors.textMuted
-                        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = isSelected,
+                onClick = onClick,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = colors.accentBlue,
+                    unselectedColor = colors.textMuted
+                )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = model.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ProviderBadge(provider = model.provider)
+                    Text(
+                        text = formatContextLength(model.contextLength),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = colors.textMuted
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = model.name,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = colors.textPrimary
-                            )
-                            if (model.isPro) {
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Surface(
-                                    shape = RoundedCornerShape(4.dp),
-                                    color = colors.accentViolet.copy(alpha = 0.15f)
-                                ) {
-                                    Text(
-                                        text = "PRO",
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = colors.accentViolet,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        }
-                        Text(
-                            text = model.provider,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.textMuted
-                        )
-                    }
                 }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = formatPricing(model.pricing.prompt, model.pricing.completion),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.accentAmber
+                )
             }
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Text(
-                text = model.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            IconButton(
+                onClick = onChatClick,
+                modifier = Modifier.size(40.dp)
             ) {
-                ModelStat(label = "Context", value = model.contextWindow, colors = colors)
-                ModelStat(label = "Speed", value = model.speed, colors = colors)
-            }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = model.costPerToken,
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.accentAmber
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                model.capabilities.forEach { capability ->
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = colors.borderDefault
-                    ) {
-                        Text(
-                            text = capability,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = colors.textSecondary
-                        )
-                    }
-                }
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Chat with model",
+                    tint = colors.accentBlue
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ModelStat(label: String, value: String, colors: UnifiedAIColors) {
-    Column {
+private fun ProviderBadge(provider: String) {
+    val colors = UnifiedTheme.colors
+    Surface(
+        shape = RoundedCornerShape(4.dp),
+        color = colors.borderDefault
+    ) {
         Text(
-            text = label,
+            text = provider,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
-            color = colors.textMuted
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            color = colors.textPrimary
+            color = colors.textSecondary
         )
     }
+}
+
+private fun formatContextLength(length: Int): String {
+    return when {
+        length >= 1_000_000 -> "${length / 1_000_000}M ctx"
+        length >= 1_000 -> "${length / 1_000}K ctx"
+        else -> "$length ctx"
+    }
+}
+
+private fun formatPricing(prompt: Double, completion: Double): String {
+    return "${"%.8f".format(prompt).trimEnd('0').trimEnd('.')}/in • ${"%.8f".format(completion).trimEnd('0').trimEnd('.')}/out"
 }

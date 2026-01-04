@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetCurrentUserUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(): Resource<User> {
-        return authRepository.getCurrentUser()
+    suspend operator fun invoke(forceRefresh: Boolean = false): Resource<User> {
+        return authRepository.getCurrentUser(forceRefresh)
     }
 }

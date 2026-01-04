@@ -18,6 +18,7 @@ sealed class Screen(val route: String) {
     
     // AI Configuration
     data object ModelSelection : Screen("model_selection")
+    data object ConfigureModel : Screen("configure_model")
     data object McpServers : Screen("mcp_servers")
     data object RagSettings : Screen("rag_settings")
     data object SystemPrompt : Screen("system_prompt")
@@ -36,4 +37,12 @@ sealed class Screen(val route: String) {
     data object HelpCenter : Screen("help_center")
     data object SendFeedback : Screen("send_feedback")
     data object About : Screen("about")
+    
+    // Chat with specific model
+    data class ChatWithModel(val modelId: String) : Screen("chat?modelId=$modelId") {
+        companion object {
+            const val ROUTE = "chat?modelId={modelId}"
+            const val ARG_MODEL_ID = "modelId"
+        }
+    }
 }
