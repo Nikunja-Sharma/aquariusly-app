@@ -233,6 +233,14 @@ class ChatViewModel @Inject constructor(
     private fun buildChatMessages(currentContent: String): List<ChatMessage> {
         val messages = mutableListOf<ChatMessage>()
         
+        // Add system prompt first
+        messages.add(
+            ChatMessage(
+                role = ChatMessage.ROLE_SYSTEM,
+                content = "You are Aquariusly, a helpful AI assistant. Be concise, friendly, and helpful in your responses. IMPORTANT: Never use tables or table-formatted text in your responses. Even for comparisons. Tables are strictly prohibited."
+            )
+        )
+        
         // Add conversation history (last 10 messages for context)
         _state.value.messages.takeLast(10).dropLast(1).forEach { msg ->
             messages.add(

@@ -45,7 +45,7 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
-            buildConfigField("String", "BASE_URL", "\"http://localhost:3000/api/\"")
+            buildConfigField("String", "BASE_URL", "\"https://ai-api.isdev.in/api/\"")
             buildConfigField("Boolean", "DEBUG_MODE", "true")
         }
         release {
@@ -122,6 +122,10 @@ dependencies {
     
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")
+    
+    // Markdown rendering with extended features (tables, etc.)
+    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.27.0")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.27.0")
     
     // Testing
     testImplementation(libs.junit)
