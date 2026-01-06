@@ -1,6 +1,5 @@
 package com.nikunja.aquariusly.ui.screens.chat.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -8,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nikunja.aquariusly.domain.model.AIModel
@@ -26,15 +27,14 @@ fun EmptyStateContent(selectedModel: AIModel) {
         Box(
             modifier = Modifier
                 .size(72.dp)
-                .clip(CircleShape)
-                .background(selectedModel.brandColor.copy(alpha = 0.1f)),
+                .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = selectedModel.name.first().toString(),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = selectedModel.brandColor
+            Icon(
+                painter = painterResource(id = selectedModel.iconRes),
+                contentDescription = selectedModel.name,
+                modifier = Modifier.size(72.dp),
+                tint = Color.Unspecified
             )
         }
         

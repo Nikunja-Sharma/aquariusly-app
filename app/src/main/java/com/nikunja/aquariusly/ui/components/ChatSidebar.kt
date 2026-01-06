@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -262,16 +263,24 @@ private fun HistoryItem(
             Box(
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(CircleShape)
-                    .background(providerColor.copy(alpha = 0.15f)),
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = model?.name?.first()?.toString() ?: "?",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = providerColor
-                )
+                if (model != null) {
+                    Icon(
+                        painter = painterResource(id = model.iconRes),
+                        contentDescription = model.name,
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.Unspecified
+                    )
+                } else {
+                    Text(
+                        text = "?",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = providerColor
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.width(10.dp))
@@ -434,15 +443,14 @@ private fun ModelSelectionSection(
                 Box(
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(CircleShape)
-                        .background(selectedModel.brandColor.copy(alpha = 0.15f)),
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = selectedModel.name.first().toString(),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = selectedModel.brandColor
+                    Icon(
+                        painter = painterResource(id = selectedModel.iconRes),
+                        contentDescription = selectedModel.name,
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.Unspecified
                     )
                 }
                 
@@ -523,15 +531,14 @@ private fun SimpleModelItem(
             Box(
                 modifier = Modifier
                     .size(28.dp)
-                    .clip(CircleShape)
-                    .background(model.brandColor.copy(alpha = 0.15f)),
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = model.name.first().toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = model.brandColor
+                Icon(
+                    painter = painterResource(id = model.iconRes),
+                    contentDescription = model.name,
+                    modifier = Modifier.size(28.dp),
+                    tint = Color.Unspecified
                 )
             }
             

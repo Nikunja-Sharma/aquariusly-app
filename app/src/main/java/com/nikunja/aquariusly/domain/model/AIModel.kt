@@ -1,6 +1,8 @@
 package com.nikunja.aquariusly.domain.model
 
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
+import com.nikunja.aquariusly.R
 import com.nikunja.aquariusly.ui.theme.*
 
 enum class AIProvider {
@@ -13,7 +15,7 @@ data class AIModel(
     val provider: AIProvider,
     val description: String,
     val brandColor: Color,
-    val iconRes: String,
+    @DrawableRes val iconRes: Int,
     val isPremium: Boolean = false,
     val maxTokens: Int = 4096,
     val capabilities: List<String> = emptyList()
@@ -26,7 +28,7 @@ object AIModels {
         provider = AIProvider.OPENAI,
         description = "OpenAI's most capable model",
         brandColor = ChatGPTGreen,
-        iconRes = "chatgpt",
+        iconRes = R.drawable.ic_chatgpt,
         isPremium = true,
         maxTokens = 8192,
         capabilities = listOf("Code", "Analysis", "Creative", "Math")
@@ -38,7 +40,7 @@ object AIModels {
         provider = AIProvider.ANTHROPIC,
         description = "Anthropic's helpful assistant",
         brandColor = ClaudeOrange,
-        iconRes = "claude",
+        iconRes = R.drawable.ic_claude,
         isPremium = true,
         maxTokens = 100000,
         capabilities = listOf("Long Context", "Analysis", "Code", "Writing")
@@ -50,7 +52,7 @@ object AIModels {
         provider = AIProvider.GOOGLE,
         description = "Google's multimodal AI",
         brandColor = GeminiBlue,
-        iconRes = "gemini",
+        iconRes = R.drawable.ic_gemini,
         isPremium = false,
         maxTokens = 32000,
         capabilities = listOf("Multimodal", "Code", "Research", "Creative")
@@ -62,10 +64,22 @@ object AIModels {
         provider = AIProvider.XAI,
         description = "xAI's witty assistant",
         brandColor = GrokRed,
-        iconRes = "grok",
+        iconRes = R.drawable.ic_grok,
         isPremium = true,
         maxTokens = 8192,
         capabilities = listOf("Real-time", "Humor", "Analysis", "Code")
+    )
+    
+    val deepseek = AIModel(
+        id = "deepseek-v3",
+        name = "DeepSeek",
+        provider = AIProvider.DEEPSEEK,
+        description = "Advanced reasoning AI",
+        brandColor = DeepSeekBlue,
+        iconRes = R.drawable.ic_deepseek,
+        isPremium = false,
+        maxTokens = 64000,
+        capabilities = listOf("Reasoning", "Code", "Math", "Analysis")
     )
     
     val mistral = AIModel(
@@ -74,7 +88,7 @@ object AIModels {
         provider = AIProvider.MISTRAL,
         description = "European AI excellence",
         brandColor = MistralPurple,
-        iconRes = "mistral",
+        iconRes = R.drawable.ic_mistral,
         isPremium = false,
         maxTokens = 32000,
         capabilities = listOf("Multilingual", "Code", "Fast", "Efficient")
@@ -86,22 +100,10 @@ object AIModels {
         provider = AIProvider.META,
         description = "Meta's open-source powerhouse",
         brandColor = LlamaBlue,
-        iconRes = "llama",
+        iconRes = R.drawable.ic_llama,
         isPremium = false,
         maxTokens = 8192,
         capabilities = listOf("Open Source", "Code", "Research", "Fast")
-    )
-    
-    val deepseek = AIModel(
-        id = "deepseek-v3",
-        name = "DeepSeek",
-        provider = AIProvider.DEEPSEEK,
-        description = "Advanced reasoning AI",
-        brandColor = DeepSeekBlue,
-        iconRes = "deepseek",
-        isPremium = false,
-        maxTokens = 64000,
-        capabilities = listOf("Reasoning", "Code", "Math", "Analysis")
     )
     
     val qwen = AIModel(
@@ -110,7 +112,7 @@ object AIModels {
         provider = AIProvider.ALIBABA,
         description = "Alibaba's powerful AI",
         brandColor = QwenPurple,
-        iconRes = "qwen",
+        iconRes = R.drawable.ic_qwen,
         isPremium = false,
         maxTokens = 32000,
         capabilities = listOf("Multilingual", "Code", "Creative", "Analysis")

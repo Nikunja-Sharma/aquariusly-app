@@ -1,0 +1,49 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <!-- Rounded square background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M115.612,0h280.776C459.975,0 512,52.026 512,115.612v280.776c0,63.587 -52.025,115.612 -115.612,115.612H115.612C52.026,512 0,459.975 0,396.388V115.612C0,52.026 52.026,0 115.612,0z"/>
+    <!-- Mistral logo - original is 190x135, scale to fit centered in 512x512 -->
+    <!-- Scaled size: 190*2.4=456 width, 135*2.4=324 height -->
+    <!-- Center X: (512-456)/2 = 28, Center Y: (512-324)/2 = 94 -->
+    <group
+        android:translateX="28"
+        android:translateY="94"
+        android:scaleX="2.4"
+        android:scaleY="2.4">
+        <path
+            android:fillColor="#FFD800"
+            android:pathData="M27.153,0h27.169v27.089H27.153z"/>
+        <path
+            android:fillColor="#FFD800"
+            android:pathData="M135.815,0h27.169v27.089h-27.169z"/>
+        <path
+            android:fillColor="#FFAF00"
+            android:pathData="M27.153,27.091h54.329V54.18H27.153z"/>
+        <path
+            android:fillColor="#FFAF00"
+            android:pathData="M108.661,27.091h54.329V54.18h-54.329z"/>
+        <path
+            android:fillColor="#FF8205"
+            android:pathData="M27.153,54.168h135.819v27.089H27.153z"/>
+        <path
+            android:fillColor="#FA500F"
+            android:pathData="M27.153,81.259h27.169v27.09H27.153z"/>
+        <path
+            android:fillColor="#FA500F"
+            android:pathData="M81.492,81.259h27.169v27.09H81.492z"/>
+        <path
+            android:fillColor="#FA500F"
+            android:pathData="M135.815,81.259h27.169v27.09h-27.169z"/>
+        <path
+            android:fillColor="#E10500"
+            android:pathData="M-0.001,108.339h81.489v27.09H-0.001z"/>
+        <path
+            android:fillColor="#E10500"
+            android:pathData="M108.661,108.339h81.498v27.09h-81.498z"/>
+    </group>
+</vector>

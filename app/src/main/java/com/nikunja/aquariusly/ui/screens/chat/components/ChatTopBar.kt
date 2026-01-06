@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nikunja.aquariusly.domain.model.AIModel
@@ -62,15 +64,14 @@ fun ChatTopBar(
                 Box(
                     modifier = Modifier
                         .size(24.dp)
-                        .clip(CircleShape)
-                        .background(selectedModel.brandColor.copy(alpha = 0.15f)),
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = selectedModel.name.first().toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = selectedModel.brandColor
+                    Icon(
+                        painter = painterResource(id = selectedModel.iconRes),
+                        contentDescription = selectedModel.name,
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Unspecified
                     )
                 }
                 
