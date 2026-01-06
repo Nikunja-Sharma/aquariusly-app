@@ -113,15 +113,15 @@ fun ChatScreen(
                     MessageBubble(message = message, model = state.selectedModel)
                 }
                 
-                if (state.isLoading) {
-                    item { 
-                        TypingIndicator(
-                            model = state.selectedModel,
-                            isThinking = state.isThinking,
-                            thinkingContent = state.streamingReasoning
-                        )
-                    }
-                }
+                // if (state.isLoading) {
+                //     item { 
+                //         TypingIndicator(
+                //             model = state.selectedModel,
+                //             isThinking = state.isThinking,
+                //             thinkingContent = state.streamingReasoning
+                //         )
+                //     }
+                // }
             }
             
             ChatInputSection(
