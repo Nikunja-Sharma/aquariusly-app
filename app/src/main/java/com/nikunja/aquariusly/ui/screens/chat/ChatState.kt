@@ -7,6 +7,7 @@ import com.nikunja.aquariusly.domain.model.ChatActionType
 import com.nikunja.aquariusly.domain.model.ConfigurableModel
 import com.nikunja.aquariusly.domain.model.Message
 import com.nikunja.aquariusly.domain.model.MessageAttachment
+import com.nikunja.aquariusly.ui.screens.chat.components.TokenSettings
 
 data class ChatHistory(
     val id: String,
@@ -25,6 +26,9 @@ data class ChatState(
     val preferredModels: List<ConfigurableModel> = emptyList(),
     val isLoading: Boolean = false,
     val isDrawerOpen: Boolean = false,
+    val isModelSettingsPanelOpen: Boolean = false,
+    val tokenSettings: TokenSettings = TokenSettings(),
+    val modelPanelExpandedProviders: Set<AIProvider> = setOf(AIProvider.OPENAI),
     val isActionsExpanded: Boolean = false,
     val activeActions: Set<ChatActionType> = emptySet(),
     val attachments: List<MessageAttachment> = emptyList(),
@@ -50,6 +54,9 @@ sealed class ChatEvent {
     data class SetInitialModel(val modelId: String) : ChatEvent()
     data class UpdateInput(val text: String) : ChatEvent()
     data object ToggleDrawer : ChatEvent()
+    data object ToggleModelSettingsPanel : ChatEvent()
+    data class UpdateTokenSettings(val settings: TokenSettings) : ChatEvent()
+    data class ToggleModelPanelProvider(val provider: AIProvider) : ChatEvent()
     data object ToggleActionsPanel : ChatEvent()
     data class ToggleAction(val actionType: ChatActionType) : ChatEvent()
     data class ToggleProviderExpanded(val provider: AIProvider) : ChatEvent()

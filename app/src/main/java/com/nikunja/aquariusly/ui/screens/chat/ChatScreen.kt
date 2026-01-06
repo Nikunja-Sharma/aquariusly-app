@@ -61,83 +61,90 @@ fun ChatScreen(
         }
     }
     
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = true,
-        drawerContent = {
-            ChatSidebar(
-                selectedModel = state.selectedModel,
-                chatHistories = state.chatHistories,
-                selectedHistoryId = state.selectedHistoryId,
-                onModelSelect = { viewModel.onEvent(ChatEvent.SelectModel(it)) },
-                onSelectHistory = { viewModel.onEvent(ChatEvent.SelectHistory(it)) },
-                onNewChat = { viewModel.onEvent(ChatEvent.NewChat) },
-                onSettingsClick = onSettingsClick,
-                onProfileClick = onProfileClick,
-                onClose = { 
-                    scope.launch { drawerState.close() }
-                    viewModel.onEvent(ChatEvent.ToggleDrawer)
-                }
-            )
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colors.backgroundPrimary)
-                .statusBarsPadding()
-                .imePadding()
-        ) {
-            ChatTopBar(
-                selectedModel = state.selectedModel,
-                onMenuClick = { 
-                    scope.launch { drawerState.open() }
-                    viewModel.onEvent(ChatEvent.ToggleDrawer)
-                },
-                onProfileClick = onProfileClick
-            )
-            
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                if (state.messages.isEmpty()) {
-                    item { EmptyStateContent(selectedModel = state.selectedModel) }
-                }
-                
-                items(items = state.messages, key = { it.id }) { message ->
-                    MessageBubble(message = message, model = state.selectedModel)
-                }
-                
-                // if (state.isLoading) {
-                //     item { 
-                //         TypingIndicator(
-                //             model = state.selectedModel,
-                //             isThinking = state.isThinking,
-                //             thinkingContent = state.streamingReasoning
-                //         )
-                //     }
-                // }
+    Box(modifier = Modifier.fillMaxSize()) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = !state.isModelSettingsPanelOpen,
+            drawerContent = {
+                ChatSidebar(
+                    chatHistories = state.chatHistories,
+                    selectedHistoryId = state.selectedHistoryId,
+                    onSelectHistory = { viewModel.onEvent(ChatEvent.SelectHistory(it)) },
+                    onNewChat = { viewModel.onEvent(ChatEvent.NewChat) },
+                    onSettingsClick = onSettingsClick,
+                    onProfileClick = onProfileClick,
+                    onClose = { 
+                        scope.launch { drawerState.close() }
+                        viewModel.onEvent(ChatEvent.ToggleDrawer)
+                    }
+                )
             }
-            
-            ChatInputSection(
-                inputText = state.inputText,
-                onInputChange = { viewModel.onEvent(ChatEvent.UpdateInput(it)) },
-                onSend = { viewModel.onEvent(ChatEvent.SendMessage(state.inputText)) },
-                isLoading = state.isLoading,
-                isActionsExpanded = state.isActionsExpanded,
-                onToggleActions = { viewModel.onEvent(ChatEvent.ToggleActionsPanel) },
-                activeActions = state.activeActions,
-                onToggleAction = { viewModel.onEvent(ChatEvent.ToggleAction(it)) },
-                attachments = state.attachments,
-                onAddAttachment = { viewModel.onEvent(ChatEvent.AddAttachment(it)) },
-                onRemoveAttachment = { viewModel.onEvent(ChatEvent.RemoveAttachment(it)) },
-                accentColor = state.selectedModel.brandColor
-            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.backgroundPrimary)
+                    .statusBarsPadding()
+                    .imePadding()
+            ) {
+                ChatTopBar(
+                    selectedModel = state.selectedModel,
+                    selectedConfigurableModel = state.selectedConfigurableModel,
+                    onMenuClick = { 
+                        scope.launch { drawerState.open() }
+                        viewModel.onEvent(ChatEvent.ToggleDrawer)
+                    },
+                    onModelClick = { viewModel.onEvent(ChatEvent.ToggleModelSettingsPanel) },
+                    onProfileClick = onProfileClick
+                )
+                
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    if (state.messages.isEmpty()) {
+                        item { EmptyStateContent(selectedModel = state.selectedModel) }
+                    }
+                    
+                    items(items = state.messages, key = { it.id }) { message ->
+                        MessageBubble(message = message, model = state.selectedModel)
+                    }
+                }
+                
+                ChatInputSection(
+                    inputText = state.inputText,
+                    onInputChange = { viewModel.onEvent(ChatEvent.UpdateInput(it)) },
+                    onSend = { viewModel.onEvent(ChatEvent.SendMessage(state.inputText)) },
+                    isLoading = state.isLoading,
+                    isActionsExpanded = state.isActionsExpanded,
+                    onToggleActions = { viewModel.onEvent(ChatEvent.ToggleActionsPanel) },
+                    activeActions = state.activeActions,
+                    onToggleAction = { viewModel.onEvent(ChatEvent.ToggleAction(it)) },
+                    attachments = state.attachments,
+                    onAddAttachment = { viewModel.onEvent(ChatEvent.AddAttachment(it)) },
+                    onRemoveAttachment = { viewModel.onEvent(ChatEvent.RemoveAttachment(it)) },
+                    accentColor = state.selectedModel.brandColor
+                )
+            }
         }
+        
+        // Model Settings Panel (slides from right)
+        ModelSettingsPanel(
+            isVisible = state.isModelSettingsPanelOpen,
+            selectedModel = state.selectedModel,
+            selectedConfigurableModel = state.selectedConfigurableModel,
+            preferredModels = state.preferredModels,
+            tokenSettings = state.tokenSettings,
+            expandedProviders = state.modelPanelExpandedProviders,
+            onProviderToggle = { viewModel.onEvent(ChatEvent.ToggleModelPanelProvider(it)) },
+            onModelSelect = { viewModel.onEvent(ChatEvent.SelectModel(it)) },
+            onConfigurableModelSelect = { viewModel.onEvent(ChatEvent.SelectConfigurableModel(it)) },
+            onTokenSettingsChange = { viewModel.onEvent(ChatEvent.UpdateTokenSettings(it)) },
+            onDismiss = { viewModel.onEvent(ChatEvent.ToggleModelSettingsPanel) }
+        )
     }
 }

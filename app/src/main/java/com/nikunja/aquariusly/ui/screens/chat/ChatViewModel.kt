@@ -14,6 +14,7 @@ import com.nikunja.aquariusly.domain.usecase.GetPreferredModelsUseCase
 import com.nikunja.aquariusly.domain.usecase.GetModelsUseCase
 import com.nikunja.aquariusly.domain.usecase.SendChatMessageUseCase
 import com.nikunja.aquariusly.domain.model.ModelFilters
+import com.nikunja.aquariusly.ui.screens.chat.components.TokenSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +71,9 @@ class ChatViewModel @Inject constructor(
             is ChatEvent.SetInitialModel -> setInitialModel(event.modelId)
             is ChatEvent.UpdateInput -> updateInput(event.text)
             is ChatEvent.ToggleDrawer -> toggleDrawer()
+            is ChatEvent.ToggleModelSettingsPanel -> toggleModelSettingsPanel()
+            is ChatEvent.UpdateTokenSettings -> updateTokenSettings(event.settings)
+            is ChatEvent.ToggleModelPanelProvider -> toggleModelPanelProvider(event.provider)
             is ChatEvent.ToggleActionsPanel -> toggleActionsPanel()
             is ChatEvent.ToggleAction -> toggleAction(event.actionType)
             is ChatEvent.ToggleProviderExpanded -> toggleProviderExpanded(event.provider)
@@ -275,7 +279,8 @@ class ChatViewModel @Inject constructor(
             it.copy(
                 selectedModel = model,
                 selectedConfigurableModel = null,
-                isDrawerOpen = false
+                isDrawerOpen = false,
+                isModelSettingsPanelOpen = false
             )
         }
     }
@@ -284,7 +289,8 @@ class ChatViewModel @Inject constructor(
         _state.update {
             it.copy(
                 selectedConfigurableModel = model,
-                isDrawerOpen = false
+                isDrawerOpen = false,
+                isModelSettingsPanelOpen = false
             )
         }
     }
@@ -297,6 +303,25 @@ class ChatViewModel @Inject constructor(
         _state.update { it.copy(isDrawerOpen = !it.isDrawerOpen) }
     }
     
+    private fun toggleModelSettingsPanel() {
+        _state.update { it.copy(isModelSettingsPanelOpen = !it.isModelSettingsPanelOpen) }
+    }
+    
+    private fun updateTokenSettings(settings: TokenSettings) {
+        _state.update { it.copy(tokenSettings = settings) }
+    }
+    
+    private fun toggleModelPanelProvider(provider: AIProvider) {
+        _state.update { currentState ->
+            val newExpanded = if (currentState.modelPanelExpandedProviders.contains(provider)) {
+                currentState.modelPanelExpandedProviders - provider
+            } else {
+                currentState.modelPanelExpandedProviders + provider
+            }
+            currentState.copy(modelPanelExpandedProviders = newExpanded)
+        }
+    }
+
     private fun toggleActionsPanel() {
         _state.update { it.copy(isActionsExpanded = !it.isActionsExpanded) }
     }

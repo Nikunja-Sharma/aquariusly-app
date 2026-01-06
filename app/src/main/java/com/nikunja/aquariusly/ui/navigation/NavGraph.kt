@@ -5,6 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -32,9 +36,36 @@ fun NavGraph(
     navController: NavHostController,
     hasCompletedOnboarding: Boolean,
     initialChatId: String? = null,
+    pendingReferralCode: String? = null,
+    onReferralCodeConsumed: () -> Unit = {},
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+    var showClaimDialog by remember { mutableStateOf(pendingReferralCode != null) }
+    
+    // Show claim dialog when referral code is present and user is logged in
+    LaunchedEffect(pendingReferralCode, isLoggedIn) {
+        if (pendingReferralCode != null && isLoggedIn) {
+            showClaimDialog = true
+        }
+    }
+    
+    // Claim Credits Dialog
+    if (showClaimDialog && pendingReferralCode != null) {
+        com.nikunja.aquariusly.ui.screens.referral.ClaimCreditsDialog(
+            referralCode = pendingReferralCode,
+            onClaim = {
+                showClaimDialog = false
+                onReferralCodeConsumed()
+                // Navigate to referral screen to apply the code
+                navController.navigate(Screen.Referral.route)
+            },
+            onDismiss = {
+                showClaimDialog = false
+                onReferralCodeConsumed()
+            }
+        )
+    }
     
     val startDestination = when {
         !hasCompletedOnboarding -> Screen.Onboarding.route
@@ -171,7 +202,8 @@ fun NavGraph(
                 onSecurityClick = { navController.navigate(Screen.Security.route) },
                 onHelpCenterClick = { navController.navigate(Screen.HelpCenter.route) },
                 onSendFeedbackClick = { navController.navigate(Screen.SendFeedback.route) },
-                onAboutClick = { navController.navigate(Screen.About.route) }
+                onAboutClick = { navController.navigate(Screen.About.route) },
+                onReferralClick = { navController.navigate(Screen.Referral.route) }
             )
         }
         
@@ -283,6 +315,13 @@ fun NavGraph(
         
         composable(route = Screen.About.route) {
             AboutScreen(onBackClick = { navController.popBackStack() })
+        }
+        
+        // Referral Screen
+        composable(route = Screen.Referral.route) {
+            com.nikunja.aquariusly.ui.screens.referral.ReferralScreen(
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }

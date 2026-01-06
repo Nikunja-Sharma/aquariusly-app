@@ -37,6 +37,35 @@
                     android:host="chat" />
             </intent-filter>
             
+            <!-- Custom scheme deep link for referrals -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="aquariusly"
+                    android:host="referral" />
+            </intent-filter>
+            
+            <!-- HTTPS App Link for ai.isdev.in -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="ai.isdev.in"
+                    android:pathPrefix="/chat" />
+                <data
+                    android:scheme="https"
+                    android:host="ai.isdev.in"
+                    android:pathPrefix="/referral" />
+                <data
+                    android:scheme="https"
+                    android:host="ai.isdev.in"
+                    android:pathPrefix="/invite" />
+            </intent-filter>
+            
             <!-- HTTPS App Link for ai-api.isdev.in -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />

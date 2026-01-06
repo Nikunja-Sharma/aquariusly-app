@@ -63,6 +63,7 @@ fun SettingsScreen(
     onHelpCenterClick: () -> Unit = {},
     onSendFeedbackClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
+    onReferralClick: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -332,6 +333,13 @@ fun SettingsScreen(
 
             // Support
             SettingsSection(title = "Support", colors = colors) {
+                SettingsNavigationItem(
+                    icon = Icons.Default.Star,
+                    title = "Invite Friends",
+                    subtitle = "Earn free credits by referring friends",
+                    onClick = onReferralClick,
+                    colors = colors
+                )
                 SettingsNavigationItem(
                     icon = Icons.Default.Info,
                     title = "Help Center",

@@ -38,6 +38,12 @@ sealed class Screen(val route: String) {
     data object SendFeedback : Screen("send_feedback")
     data object About : Screen("about")
     
+    // Referral
+    data object Referral : Screen("referral")
+    data object ClaimCredits : Screen("claim_credits/{code}") {
+        fun createRoute(code: String) = "claim_credits/$code"
+    }
+    
     // Chat with specific model
     data class ChatWithModel(val modelId: String) : Screen("chat?modelId=$modelId") {
         companion object {
