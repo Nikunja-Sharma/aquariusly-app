@@ -1,6 +1,8 @@
 package com.nikunja.aquariusly.data.repository
 
 import com.nikunja.aquariusly.data.remote.api.AuthApiService
+import com.nikunja.aquariusly.data.remote.dto.EmailSignInRequest
+import com.nikunja.aquariusly.data.remote.dto.ErrorResponse
 import com.nikunja.aquariusly.data.remote.dto.GoogleSignInRequest
 import com.nikunja.aquariusly.data.remote.dto.UserDto
 import com.nikunja.aquariusly.data.remote.interceptor.CookieInterceptor
@@ -31,6 +33,34 @@ class AuthRepositoryImpl @Inject constructor(
                 }
             } else {
                 Resource.Error(response.message() ?: "Sign in failed")
+            }
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error")
+        }
+    }
+
+    override suspend fun signInWithEmail(firebaseIdToken: String): Resource<User> {
+        return try {
+            val response = authApiService.signInWithEmail(EmailSignInRequest(firebaseIdToken))
+            
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    val user = body.user.toDomain()
+                    cachedUser = user
+                    Resource.Success(user)
+                } else {
+                    Resource.Error("Empty response")
+                }
+            } else {
+                // Parse error body to get actual error message
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    com.google.gson.Gson().fromJson(errorBody, ErrorResponse::class.java)?.error
+                } catch (e: Exception) {
+                    null
+                }
+                Resource.Error(errorMessage ?: response.message() ?: "Sign in failed")
             }
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error")

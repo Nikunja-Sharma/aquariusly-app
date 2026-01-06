@@ -3,6 +3,7 @@ package com.nikunja.aquariusly.ui.screens.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikunja.aquariusly.domain.usecase.RegisterFcmTokenUseCase
+import com.nikunja.aquariusly.domain.usecase.SignInWithEmailUseCase
 import com.nikunja.aquariusly.domain.usecase.SignInWithGoogleUseCase
 import com.nikunja.aquariusly.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    private val signInWithEmailUseCase: SignInWithEmailUseCase,
     private val registerFcmTokenUseCase: RegisterFcmTokenUseCase
 ) : ViewModel() {
 
@@ -32,7 +34,6 @@ class LoginViewModel @Inject constructor(
             
             when (val result = signInWithGoogleUseCase(idToken)) {
                 is Resource.Success -> {
-                    // Register FCM token after successful login
                     registerFcmToken()
                     _state.update { it.copy(isLoading = false, isSigningIn = false, isLoggedIn = true) }
                 }
@@ -44,6 +45,41 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun signInWithFirebaseEmail(firebaseIdToken: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null) }
+            
+            when (val result = signInWithEmailUseCase(firebaseIdToken)) {
+                is Resource.Success -> {
+                    registerFcmToken()
+                    _state.update { it.copy(isLoading = false, isSigningIn = false, isLoggedIn = true) }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(isLoading = false, isSigningIn = false, error = result.message) }
+                }
+                is Resource.Loading -> {
+                    _state.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
+    fun toggleEmailForm() {
+        _state.update { it.copy(showEmailForm = !it.showEmailForm, error = null) }
+    }
+
+    fun updateEmail(email: String) {
+        _state.update { it.copy(email = email) }
+    }
+
+    fun updatePassword(password: String) {
+        _state.update { it.copy(password = password) }
+    }
+
+    fun toggleSignUpMode() {
+        _state.update { it.copy(isSignUp = !it.isSignUp, error = null) }
     }
 
     private fun registerFcmToken() {

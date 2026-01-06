@@ -7,6 +7,11 @@ data class GoogleSignInRequest(
     val idToken: String
 )
 
+data class EmailSignInRequest(
+    @SerializedName("idToken")
+    val idToken: String
+)
+
 data class AuthResponse(
     @SerializedName("user")
     val user: UserDto

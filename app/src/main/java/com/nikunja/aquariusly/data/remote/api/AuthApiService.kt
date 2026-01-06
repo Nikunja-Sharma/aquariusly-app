@@ -11,6 +11,11 @@ interface AuthApiService {
         @Body request: GoogleSignInRequest
     ): Response<AuthResponse>
 
+    @POST("auth/email")
+    suspend fun signInWithEmail(
+        @Body request: EmailSignInRequest
+    ): Response<AuthResponse>
+
     @POST("auth/refresh")
     suspend fun refreshToken(): Response<AuthResponse>
 
