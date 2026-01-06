@@ -49,10 +49,10 @@ val ChatGPTGreen = Color(0xFF10A37F)
 val ClaudeOrange = Color(0xFFD97706)
 val GeminiBlue = Color(0xFF4285F4)
 val GrokRed = Color(0xFFEF4444)
+val DeepSeekBlue = Color(0xFF4F6BED)
 val MistralPurple = Color(0xFF8B5CF6)
 val LlamaBlue = Color(0xFF0EA5E9)
-val CopilotBlue = Color(0xFF2563EB)
-val PerplexityTeal = Color(0xFF14B8A6)
+val QwenPurple = Color(0xFF7C3AED)
 
 // Semantic Colors
 val SuccessLight = Color(0xFF22C55E)

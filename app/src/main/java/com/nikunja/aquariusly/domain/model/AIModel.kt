@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.nikunja.aquariusly.ui.theme.*
 
 enum class AIProvider {
-    OPENAI, ANTHROPIC, GOOGLE, XAI, MISTRAL, META, MICROSOFT, PERPLEXITY
+    OPENAI, ANTHROPIC, GOOGLE, XAI, DEEPSEEK, MISTRAL, META, ALIBABA
 }
 
 data class AIModel(
@@ -92,29 +92,29 @@ object AIModels {
         capabilities = listOf("Open Source", "Code", "Research", "Fast")
     )
     
-    val copilot = AIModel(
-        id = "copilot",
-        name = "Copilot",
-        provider = AIProvider.MICROSOFT,
-        description = "Microsoft's AI companion",
-        brandColor = CopilotBlue,
-        iconRes = "copilot",
-        isPremium = true,
-        maxTokens = 16000,
-        capabilities = listOf("Productivity", "Code", "Office", "Search")
-    )
-    
-    val perplexity = AIModel(
-        id = "perplexity",
-        name = "Perplexity",
-        provider = AIProvider.PERPLEXITY,
-        description = "AI-powered search engine",
-        brandColor = PerplexityTeal,
-        iconRes = "perplexity",
+    val deepseek = AIModel(
+        id = "deepseek-v3",
+        name = "DeepSeek",
+        provider = AIProvider.DEEPSEEK,
+        description = "Advanced reasoning AI",
+        brandColor = DeepSeekBlue,
+        iconRes = "deepseek",
         isPremium = false,
-        maxTokens = 4096,
-        capabilities = listOf("Search", "Citations", "Research", "Facts")
+        maxTokens = 64000,
+        capabilities = listOf("Reasoning", "Code", "Math", "Analysis")
     )
     
-    val allModels = listOf(chatGPT, claude, gemini, grok, mistral, llama, copilot, perplexity)
+    val qwen = AIModel(
+        id = "qwen-max",
+        name = "Qwen",
+        provider = AIProvider.ALIBABA,
+        description = "Alibaba's powerful AI",
+        brandColor = QwenPurple,
+        iconRes = "qwen",
+        isPremium = false,
+        maxTokens = 32000,
+        capabilities = listOf("Multilingual", "Code", "Creative", "Analysis")
+    )
+    
+    val allModels = listOf(chatGPT, claude, gemini, grok, deepseek, mistral, llama, qwen)
 }

@@ -661,9 +661,9 @@ private fun getProviderDisplayName(provider: AIProvider): String {
         AIProvider.ANTHROPIC -> "Anthropic"
         AIProvider.GOOGLE -> "Google"
         AIProvider.XAI -> "xAI"
+        AIProvider.DEEPSEEK -> "DeepSeek"
         AIProvider.MISTRAL -> "Mistral AI"
         AIProvider.META -> "Meta"
-        AIProvider.MICROSOFT -> "Microsoft"
-        AIProvider.PERPLEXITY -> "Perplexity"
+        AIProvider.ALIBABA -> "Alibaba"
     }
 }
