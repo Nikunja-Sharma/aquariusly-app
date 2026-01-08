@@ -10,7 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.res.painterResource
+import com.nikunja.aquariusly.R
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,6 +47,7 @@ fun MdCodeBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = 20.dp)
             .clip(RoundedCornerShape(12.dp))
     ) {
         // Header with language and copy button
@@ -53,7 +55,7 @@ fun MdCodeBlock(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF2D2D2D))
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -78,11 +80,20 @@ fun MdCodeBlock(
                     contentColor = Color(0xFF9CA3AF)
                 )
             ) {
-                Icon(
-                    imageVector = if (isCopied) Icons.Filled.Check else Icons.Filled.Share,
-                    contentDescription = if (isCopied) "Copied" else "Copy code",
-                    modifier = Modifier.size(14.dp)
-                )
+                if (isCopied) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = "Copied",
+                        modifier = Modifier.size(14.dp)
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_copy),
+                        contentDescription = "Copy code",
+                        modifier = Modifier.size(14.dp),
+                        tint = Color(0xFF9CA3AF)
+                    )
+                }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = if (isCopied) "Copied!" else "Copy",
