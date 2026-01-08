@@ -241,7 +241,7 @@ class ChatViewModel @Inject constructor(
         messages.add(
             ChatMessage(
                 role = ChatMessage.ROLE_SYSTEM,
-                content = "You are Aquariusly, a helpful AI assistant. Be concise, friendly, and helpful in your responses. IMPORTANT: Never use tables or table-formatted text in your responses. Even for comparisons. Tables are strictly prohibited."
+                content = "You are Aquariusly, a helpful AI assistant."
             )
         )
         

@@ -123,9 +123,11 @@ dependencies {
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")
     
-    // Markdown rendering with extended features (tables, etc.)
-    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.27.0")
-    implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.27.0")
+    // Markdown parsing (commonmark with GFM extensions)
+    implementation("org.commonmark:commonmark:0.22.0")
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.22.0")
+    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.22.0")
+    implementation("org.commonmark:commonmark-ext-autolink:0.22.0")
     
     // Play Install Referrer (for tracking referrals)
     implementation("com.android.installreferrer:installreferrer:2.2")
