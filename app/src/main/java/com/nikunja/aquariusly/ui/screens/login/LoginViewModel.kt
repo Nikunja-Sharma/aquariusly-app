@@ -30,17 +30,21 @@ class LoginViewModel @Inject constructor(
 
     fun signInWithGoogle(idToken: String) {
         viewModelScope.launch {
+            android.util.Log.d("LoginViewModel", "signInWithGoogle called with token: ${idToken.take(20)}...")
             _state.update { it.copy(isLoading = true, error = null) }
             
             when (val result = signInWithGoogleUseCase(idToken)) {
                 is Resource.Success -> {
+                    android.util.Log.d("LoginViewModel", "Google sign-in successful")
                     registerFcmToken()
                     _state.update { it.copy(isLoading = false, isSigningIn = false, isLoggedIn = true) }
                 }
                 is Resource.Error -> {
+                    android.util.Log.e("LoginViewModel", "Google sign-in error: ${result.message}")
                     _state.update { it.copy(isLoading = false, isSigningIn = false, error = result.message) }
                 }
                 is Resource.Loading -> {
+                    android.util.Log.d("LoginViewModel", "Google sign-in loading")
                     _state.update { it.copy(isLoading = true) }
                 }
             }

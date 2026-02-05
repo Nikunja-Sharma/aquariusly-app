@@ -20,21 +20,29 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithGoogle(idToken: String): Resource<User> {
         return try {
+            android.util.Log.d("AuthRepository", "Making Google sign-in API call")
             val response = authApiService.signInWithGoogle(GoogleSignInRequest(idToken))
+            android.util.Log.d("AuthRepository", "API response received: ${response.code()}")
             
             if (response.isSuccessful) {
                 val body = response.body()
+                android.util.Log.d("AuthRepository", "Response body: $body")
                 if (body != null) {
                     val user = body.user.toDomain()
                     cachedUser = user
+                    android.util.Log.d("AuthRepository", "User cached: ${user.email}")
                     Resource.Success(user)
                 } else {
+                    android.util.Log.e("AuthRepository", "Empty response body")
                     Resource.Error("Empty response")
                 }
             } else {
+                val errorBody = response.errorBody()?.string()
+                android.util.Log.e("AuthRepository", "API error: ${response.code()} - $errorBody")
                 Resource.Error(response.message() ?: "Sign in failed")
             }
         } catch (e: Exception) {
+            android.util.Log.e("AuthRepository", "Exception during API call", e)
             Resource.Error(e.message ?: "Network error")
         }
     }

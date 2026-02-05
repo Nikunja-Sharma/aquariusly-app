@@ -474,32 +474,45 @@ private suspend fun signInWithGoogle(
     onError: (String) -> Unit
 ) {
     try {
+        android.util.Log.d("GoogleSignIn", "Starting Google Sign-In process")
+        
         val credentialManager = CredentialManager.create(context)
+        android.util.Log.d("GoogleSignIn", "CredentialManager created")
         
         val webClientId = context.getString(R.string.default_web_client_id)
+        android.util.Log.d("GoogleSignIn", "Web Client ID: $webClientId")
         
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setAutoSelectEnabled(false)
             .setServerClientId(webClientId)
             .build()
+        android.util.Log.d("GoogleSignIn", "GoogleIdOption created")
         
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
+        android.util.Log.d("GoogleSignIn", "GetCredentialRequest created")
         
         val result = credentialManager.getCredential(context, request)
+        android.util.Log.d("GoogleSignIn", "Credential received")
+        
         val credential = result.credential
+        android.util.Log.d("GoogleSignIn", "Credential type: ${credential.type}")
         
         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
         val idToken = googleIdTokenCredential.idToken
+        android.util.Log.d("GoogleSignIn", "ID Token extracted successfully")
         
         onTokenReceived(idToken)
     } catch (e: androidx.credentials.exceptions.NoCredentialException) {
+        android.util.Log.e("GoogleSignIn", "NoCredentialException: ${e.message}")
         onError("No Google account found. Please add a Google account to your device.")
     } catch (e: androidx.credentials.exceptions.GetCredentialCancellationException) {
+        android.util.Log.e("GoogleSignIn", "GetCredentialCancellationException: ${e.message}")
         onError("Sign in cancelled")
     } catch (e: Exception) {
+        android.util.Log.e("GoogleSignIn", "Exception: ${e.message}", e)
         onError("Sign in failed: ${e.message}")
     }
 }
